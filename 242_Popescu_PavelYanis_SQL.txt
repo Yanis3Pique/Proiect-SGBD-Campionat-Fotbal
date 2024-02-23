@@ -1,0 +1,1185 @@
+
+DROP TABLE ANGAJAT;
+DROP TABLE JUCATOR;
+DROP TABLE ANTRENOR;
+DROP TABLE SPONSORECHIPA;
+DROP TABLE SPONSOR;
+DROP TABLE ARBITRUMECI;
+DROP TABLE ECHIPAMECI;
+DROP TABLE MECI;
+DROP TABLE ARBITRU;
+DROP TABLE MAGAZIN;
+DROP TABLE ECHIPA;
+-----------------------------------------------------------------------------------
+
+CREATE TABLE ECHIPA (
+    EchipaID INT PRIMARY KEY,
+    NumeEchipa VARCHAR2(200) NOT NULL,
+    Locatie VARCHAR(200) NOT NULL,
+    NumeStadion VARCHAR2(200) NOT NULL,
+    Capacitate NUMBER(15) CHECK ( Capacitate > 0 ),
+    Castigate NUMBER(10) NOT NULL CHECK (Castigate >= 0),
+    Egaluri NUMBER(10) NOT NULL CHECK (Egaluri >= 0),
+    Pierdute NUMBER(10) NOT NULL CHECK (Pierdute >= 0)
+);
+
+CREATE TABLE ARBITRU (
+    ArbitruID INT PRIMARY KEY,
+    Nume VARCHAR2(200) NOT NULL,
+    Prenume VARCHAR2(200) NOT NULL,
+    Nationalitate VARCHAR2(200) NOT NULL
+);
+
+CREATE TABLE MAGAZIN (
+    MagazinID INT PRIMARY KEY,
+    NumeMagazin VARCHAR2(200) NOT NULL,
+    EchipaID INT,
+    FOREIGN KEY (EchipaID) REFERENCES ECHIPA(EchipaID)
+);
+
+CREATE TABLE ANGAJAT (
+    AngajatID INT PRIMARY KEY,
+    Nume VARCHAR2(200) NOT NULL,
+    Prenume VARCHAR2(200) NOT NULL,
+    SalariuLunar NUMBER(20) NOT NULL CHECK ( SalariuLunar > 0 ),
+    MagazinID INT,
+    FOREIGN KEY (MagazinID) REFERENCES MAGAZIN(MagazinID)
+);
+
+CREATE TABLE JUCATOR (
+    JucatorID INT PRIMARY KEY,
+    Nume VARCHAR2(200) NOT NULL,
+    Prenume VARCHAR2(200) NOT NULL,
+    DataNasterii DATE NOT NULL,
+    SalariuAnual NUMBER(20) NOT NULL CHECK ( SalariuAnual > 0 ),
+    Nationalitate VARCHAR2(200) NOT NULL,
+    Pozitie VARCHAR2(200) NOT NULL,
+    Inaltime NUMBER(10) NOT NULL CHECK ( Inaltime > 0 ),
+    Greutate NUMBER(10) NOT NULL CHECK ( Greutate > 0 ),
+    EchipaID INT,
+    FOREIGN KEY (EchipaID) REFERENCES ECHIPA(EchipaID)
+);
+
+CREATE TABLE ANTRENOR (
+    AntrenorID INT PRIMARY KEY,
+    Nume VARCHAR2(200) NOT NULL,
+    Prenume VARCHAR2(200) NOT NULL,
+    Nationalitate VARCHAR2(200) NOT NULL,
+    DataNasterii DATE NOT NULL,
+    EchipaID INT,
+    FOREIGN KEY (EchipaID) REFERENCES ECHIPA(EchipaID)
+);
+
+CREATE TABLE SPONSOR (
+    SponsorID INT PRIMARY KEY,
+    NumeSponsor VARCHAR2(200) NOT NULL,
+    Tara VARCHAR2(200) NOT NULL
+);
+
+CREATE TABLE MECI (
+    MeciID INT PRIMARY KEY,
+    DataMeci DATE NOT NULL,
+    ScorEchipa1 NUMBER(10) NOT NULL CHECK ( ScorEchipa1 >= 0 ),
+    ScorEchipa2 NUMBER(10) NOT NULL CHECK ( ScorEchipa2 >= 0 ),
+    NrCartonaseGalbene NUMBER(10) NOT NULL CHECK ( NrCartonaseGalbene >= 0 ),
+    NrCartonaseRosii NUMBER(10) NOT NULL CHECK ( NrCartonaseRosii >= 0 )
+);
+
+CREATE TABLE SPONSORECHIPA(
+    SponsorID INT,
+    EchipaID INT,
+    PRIMARY KEY (SponsorID, EchipaID),
+    FOREIGN KEY (SponsorID) REFERENCES SPONSOR(SponsorID),
+    FOREIGN KEY (EchipaID) REFERENCES ECHIPA(EchipaID)
+);
+
+CREATE TABLE ARBITRUMECI (
+    MeciID INT,
+    ArbitruID INT,
+    RolArbitru VARCHAR2(50) NOT NULL,
+    PRIMARY KEY (MeciID, ArbitruID),
+    FOREIGN KEY (MeciID) REFERENCES MECI(MeciID),
+    FOREIGN KEY (ArbitruID) REFERENCES ARBITRU(ArbitruID)
+);
+
+CREATE TABLE ECHIPAMECI (
+    EchipaID_1 INT,
+    EchipaID_2 INT,
+    MeciID INT,
+    PRIMARY KEY (EchipaID_1, EchipaID_2, MeciID),
+    FOREIGN KEY (EchipaID_1) REFERENCES ECHIPA(EchipaID),
+    FOREIGN KEY (EchipaID_2) REFERENCES ECHIPA(EchipaID),
+    FOREIGN KEY (MeciID) REFERENCES MECI(MeciID)
+);
+------------------------------------------------------------------------------------
+
+
+--INSERT ECHIPA
+INSERT INTO ECHIPA (EchipaID, NumeEchipa, Locatie, NumeStadion, Capacitate, Castigate, Egaluri, Pierdute)
+VALUES (1, 'FC Barcelona', 'Barcelona, Spania', 'Camp Nou', 99354, 1, 2, 0);
+INSERT INTO ECHIPA (EchipaID, NumeEchipa, Locatie, NumeStadion, Capacitate, Castigate, Egaluri, Pierdute)
+VALUES (2, 'Real Madrid', 'Madrid, Spania', 'Santiago Bernabeu', 81044, 0, 3, 1);
+INSERT INTO ECHIPA (EchipaID, NumeEchipa, Locatie, NumeStadion, Capacitate, Castigate, Egaluri, Pierdute)
+VALUES (3, 'Manchester United', 'Manchester, Marea Britanie', 'Old Trafford', 74879, 1, 2, 1);
+INSERT INTO ECHIPA (EchipaID, NumeEchipa, Locatie, NumeStadion, Capacitate, Castigate, Egaluri, Pierdute)
+VALUES (4, 'Bayern Munich', 'Munich, Germania', 'Allianz Arena', 75000, 0, 4, 1);
+INSERT INTO ECHIPA (EchipaID, NumeEchipa, Locatie, NumeStadion, Capacitate, Castigate, Egaluri, Pierdute)
+VALUES (5, 'Juventus', 'Torino, Italia', 'Allianz Stadium', 41507, 1, 3, 0);
+INSERT INTO ECHIPA (EchipaID, NumeEchipa, Locatie, NumeStadion, Capacitate, Castigate, Egaluri, Pierdute)
+VALUES (6, 'Schalke 04', 'Gelsenkirchen, Germania', 'Veltins-Arena', 54740, 0, 0, 0);
+
+
+--INSERT ANTRENOR
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (1, 'Mourinho', 'Jose', 'Portugheza', TO_DATE('26-01-1963', 'DD-MM-YYYY'), 1);
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (2, 'Klopp', 'Jurgen', 'Germana', TO_DATE('16-06-1967', 'DD-MM-YYYY'), 2);
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (3, 'Guardiola', 'Pep', 'Spaniola', TO_DATE('18-01-1971', 'DD-MM-YYYY'), 3);
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (4, 'Ancelotti', 'Carlo', 'Italiana', TO_DATE('10-06-1959', 'DD-MM-YYYY'), 4);
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (5, 'Zidane', 'Zinedine', 'Franceza', TO_DATE('23-06-1972', 'DD-MM-YYYY'), 5);
+
+--INSERT SPONSOR
+INSERT INTO SPONSOR (SponsorID, NumeSponsor, Tara) VALUES (1, 'Nike', 'Statele Unite');
+INSERT INTO SPONSOR (SponsorID, NumeSponsor, Tara) VALUES (2, 'Adidas', 'Germania');
+INSERT INTO SPONSOR (SponsorID, NumeSponsor, Tara) VALUES (3, 'Coca-Cola', 'Statele Unite');
+INSERT INTO SPONSOR (SponsorID, NumeSponsor, Tara) VALUES (4, 'Samsung', 'Coreea de Sud');
+INSERT INTO SPONSOR (SponsorID, NumeSponsor, Tara) VALUES (5, 'PepsiCo', 'Statele Unite');
+
+--INSERT SPONSORECHIPA
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (1, 1);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (2, 2);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (3, 3);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (4, 4);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (5, 5);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (1, 2);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (2, 3);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (3, 4);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (4, 5);
+INSERT INTO SPONSORECHIPA (SponsorID, EchipaID) VALUES (5, 1);
+
+--INSERT MAGAZIN
+INSERT INTO MAGAZIN (MagazinID, NumeMagazin, EchipaID) VALUES (1, 'FC Barcelona Official Store', 1);
+INSERT INTO MAGAZIN (MagazinID, NumeMagazin, EchipaID) VALUES (2, 'Real Madrid Official Store', 2);
+INSERT INTO MAGAZIN (MagazinID, NumeMagazin, EchipaID) VALUES (3, 'Manchester United Megastore', 3);
+INSERT INTO MAGAZIN (MagazinID, NumeMagazin, EchipaID) VALUES (4, 'Bayern Munich Fan Shop', 4);
+INSERT INTO MAGAZIN (MagazinID, NumeMagazin, EchipaID) VALUES (5, 'Juventus Official Store', 5);
+
+--INSERT ANGAJAT
+-- Magazinul echipei 1
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (1, 'Rodriguez', 'Isabella', 2800, 1);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (2, 'Gomez', 'Carlos', 2600, 1);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (3, 'Lopez', 'Sofia', 2400, 1);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (4, 'Smith', 'James', 2300, 1);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (5, 'Mulligan', 'Emily', 2500, 1);
+-- Magazinul echipei 2
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (6, 'Ramirez', 'Diego', 2400, 2);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (7, 'Cruz', 'Maria', 2200, 2);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (8, 'Brown', 'William', 2300, 2);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (9, 'Martinez', 'Sophie', 2500, 2);
+-- Magazinul echipei 3
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (10, 'Jones', 'Oliver', 2300, 3);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (11, 'Schmidt', 'Eva', 2400, 3);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (12, 'Chen', 'Li', 2300, 3);
+-- Magazinul echipei 4
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (13, 'Gutierrez', 'Luis', 2500, 4);
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (14, 'Dubois', 'Pierre', 2200, 4);
+-- Magazinul echipei 5
+INSERT INTO ANGAJAT (AngajatID, Nume, Prenume, SalariuLunar, MagazinID) VALUES (15, 'Nguyen', 'Linh', 2200, 5);
+
+--INSERT JUCATOR
+--FC Barcelona
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (1, 'Messi', 'Lionel', TO_DATE('1987-06-24', 'YYYY-MM-DD'), 30000000, 'Argentinian', 'Atacant', '170', '72', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (2, 'Pique', 'Gerard', TO_DATE('1987-02-02', 'YYYY-MM-DD'), 15000000, 'Spaniol', 'Fundas', '194', '85', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (3, 'Busquets', 'Sergio', TO_DATE('1988-07-16', 'YYYY-MM-DD'), 12000000, 'Spaniol', 'Mijlocas', '189', '76', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (4, 'De Jong', 'Frenkie', TO_DATE('1997-05-12', 'YYYY-MM-DD'), 14000000, 'Olandez', 'Mijlocas', '180', '74', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (5, 'Alba', 'Jordi', TO_DATE('1989-03-21', 'YYYY-MM-DD'), 11000000, 'Spaniol', 'Fundas', '170', '68', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (6, 'Hernandez', 'Xavi', TO_DATE('1980-01-25', 'YYYY-MM-DD'), 18000000, 'Spaniol', 'Mijlocas', '170', '68', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (7, 'Iniesta', 'Andres', TO_DATE('1984-05-11', 'YYYY-MM-DD'), 20000000, 'Spaniol', 'Mijlocas', '170', '68', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (8, 'Puyol', 'Carles', TO_DATE('1978-04-13', 'YYYY-MM-DD'), 16000000, 'Spaniol', 'Fundas', '178', '80', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (9, 'Suarez', 'Luis', TO_DATE('1987-01-24', 'YYYY-MM-DD'), 17000000, 'Uruguayan', 'Atacant', '182', '86', 1);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (10, 'Gaucho', 'Ronaldinho', TO_DATE('1980-03-21', 'YYYY-MM-DD'), 15000000, 'Brazilian', 'Atacant', '181', '80', 1);
+
+
+--Real Madrid
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (11, 'Ronaldo', 'Cristiano', TO_DATE('1985-02-05', 'YYYY-MM-DD'), 35000000, 'Portughez', 'Atacant', '187', '83', 2);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (12, 'Varane', 'Raphael', TO_DATE('1993-04-25', 'YYYY-MM-DD'), 15000000, 'Francez', 'Fundas', '191', '81', 2);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (13, 'Kroos', 'Toni', TO_DATE('1990-01-04', 'YYYY-MM-DD'), 18000000, 'German', 'Mijlocas', '183', '76', 2);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (14, 'Mendy', 'Ferland', TO_DATE('1995-06-08', 'YYYY-MM-DD'), 12000000, 'Francez', 'Fundas', '180', '73', 2);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (15, 'Benzema', 'Karim', TO_DATE('1987-12-19', 'YYYY-MM-DD'), 22000000, 'Francez', 'Atacant', '185', '81', 2);
+--Manchester United
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (16, 'Rashford', 'Marcus', TO_DATE('1997-10-31', 'YYYY-MM-DD'), 14000000, 'Englez', 'Atacant', '186', '70', 3);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (17, 'Maguire', 'Harry', TO_DATE('1993-03-05', 'YYYY-MM-DD'), 16000000, 'Englez', 'Fundas', '194', '100', 3);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (18, 'Fernandes', 'Bruno', TO_DATE('1994-09-08', 'YYYY-MM-DD'), 17000000, 'Portughez', 'Mijlocas', '175', '70', 3);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (19, 'Shaw', 'Luke', TO_DATE('1995-07-12', 'YYYY-MM-DD'), 12000000, 'Englez', 'Fundas', '185', '75', 3);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (20, 'Cavani', 'Edinson', TO_DATE('1987-02-14', 'YYYY-MM-DD'), 16000000, 'Uruguayan', 'Atacant', '184', '71', 3);
+--Bayern Munich
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (21, 'Lewandowski', 'Robert', TO_DATE('1988-08-21', 'YYYY-MM-DD'), 28000000, 'Polonez', 'Atacant', '184', '79', 4);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (22, 'Kimmich', 'Joshua', TO_DATE('1995-02-08', 'YYYY-MM-DD'), 20000000, 'German', 'Mijlocas', '176', '73', 4);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (23, 'Muller', 'Thomas', TO_DATE('1989-09-13', 'YYYY-MM-DD'), 18000000, 'German', 'Atacant', '186', '74', 4);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (24, 'Neuer', 'Manuel', TO_DATE('1986-03-27', 'YYYY-MM-DD'), 22000000, 'German', 'Portar', '193', '92', 4);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (25, 'Davies', 'Alphonso', TO_DATE('2000-11-02', 'YYYY-MM-DD'), 16000000, 'Canadian', 'Fundas', '181', '81', 4);
+--Juventus
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (26, 'Morata', 'Alvaro', TO_DATE('1992-10-23', 'YYYY-MM-DD'), 14000000, 'Spaniol', 'Atacant', '190', '82', 5);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (27, 'Chiesa', 'Federico', TO_DATE('1997-10-25', 'YYYY-MM-DD'), 14000000, 'Italian', 'Atacant', '175', '68', 5);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (28, 'Bentancur', 'Rodrigo', TO_DATE('1997-06-25', 'YYYY-MM-DD'), 10000000, 'Uruguayan', 'Mijlocas', '187', '77', 5);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (29, 'De Ligt', 'Matthijs', TO_DATE('1999-08-12', 'YYYY-MM-DD'), 15000000, 'Olandez', 'Fundas', '189', '89', 5);
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (30, 'Szczesny', 'Wojciech', TO_DATE('1990-04-18', 'YYYY-MM-DD'), 12000000, 'Polonez', 'Portar', '195', '90', 5);
+
+--INSERT ARBITRU
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (6, 'Oliver', 'Michael', 'Englez');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (7, 'Lahoz', 'Mateu', 'Spaniol');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (8, 'Hategan', 'Ovidiu', 'Roman');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (9, 'Kim', 'Ji-hyun', 'Corean');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (10, 'O Connor', 'Sean', 'Irlandez');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (1, 'Garcia', 'Antonio', 'Spaniol');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (2, 'Smith', 'John', 'Englez');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (3, 'Muller', 'Anna', 'German');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (4, 'Rossi', 'Mario', 'Italian');
+INSERT INTO ARBITRU (ArbitruID, Nume, Prenume, Nationalitate) VALUES (5, 'Dupont', 'Sophie', 'Francez');
+
+--INSERT MECI
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (1, TO_DATE('2023-10-15', 'YYYY-MM-DD'), 2, 1, 4, 0);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (2, TO_DATE('2023-10-17', 'YYYY-MM-DD'), 0, 0, 2, 0);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (3, TO_DATE('2023-10-20', 'YYYY-MM-DD'), 3, 2, 3, 1);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (4, TO_DATE('2023-10-22', 'YYYY-MM-DD'), 1, 1, 2, 0);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (5, TO_DATE('2023-10-25', 'YYYY-MM-DD'), 2, 3, 4, 2);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (6, TO_DATE('2023-10-15', 'YYYY-MM-DD'), 1, 1, 1, 0);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (7, TO_DATE('2023-10-17', 'YYYY-MM-DD'), 0, 0, 5, 3);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (8, TO_DATE('2023-10-20', 'YYYY-MM-DD'), 2, 2, 1, 1);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (9, TO_DATE('2023-10-22', 'YYYY-MM-DD'), 1, 1, 0, 0);
+INSERT INTO MECI (MeciID, DataMeci, ScorEchipa1, ScorEchipa2, NrCartonaseGalbene, NrCartonaseRosii)
+VALUES (10, TO_DATE('2023-10-25', 'YYYY-MM-DD'), 3, 3, 2, 2);
+
+
+--INSERT ECHIPAMECI
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (1, 2, 1);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (3, 4, 3);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (5, 1, 2);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (4, 2, 4);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (3, 5, 5);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (2, 1, 6);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (4, 3, 7);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (4, 5, 8);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (2, 4, 9);
+INSERT INTO ECHIPAMECI (EchipaID_1, EchipaID_2, MeciID) VALUES (5, 3, 10);
+
+-- INSERT ARBITRUMECI - MECIURILE 1-5
+-- Arbitru Central
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (1, 1, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (2, 2, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (3, 5, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (4, 4, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (5, 5, 'Arbitru Central');
+-- Arbitru Asistent
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (1, 2, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (2, 3, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (3, 4, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (4, 5, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (5, 1, 'Arbitru Asistent');
+-- Arbitru Aditional
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (1, 3, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (2, 4, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (3, 3, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (4, 1, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (5, 2, 'Arbitru Aditional');
+-- Arbitru de Linie
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (1, 4, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (2, 5, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (3, 1, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (4, 2, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (5, 3, 'Arbitru de Linie');
+-- Arbitru VAR
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (1, 5, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (2, 1, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (3, 2, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (4, 3, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (5, 4, 'Arbitru VAR');
+
+-- INSERT ARBITRUMECI - MECIURILE 6-10
+-- Arbitru Central
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (6, 1, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (7, 2, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (8, 5, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (9, 4, 'Arbitru Central');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (10, 5, 'Arbitru Central');
+-- Arbitru Asistent
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (6, 2, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (7, 3, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (8, 4, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (9, 5, 'Arbitru Asistent');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (10, 1, 'Arbitru Asistent');
+-- Arbitru Aditional
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (6, 3, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (7, 4, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (8, 3, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (9, 1, 'Arbitru Aditional');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (10, 2, 'Arbitru Aditional');
+-- Arbitru de Linie
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (6, 4, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (7, 5, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (8, 1, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (9, 2, 'Arbitru de Linie');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (10, 3, 'Arbitru de Linie');
+-- Arbitru VAR
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (6, 5, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (7, 1, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (8, 2, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (9, 3, 'Arbitru VAR');
+INSERT INTO ARBITRUMECI (MeciID, ArbitruID, RolArbitru) VALUES (10, 4, 'Arbitru VAR');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 6
+-- AFISATI JUCATORII SI SPONSORII UNEI ECHIPE IDENTIFICATE PRIN ID. DE ASEMENEA, AFISATI SI ARBITRII, 
+-- IMPREUNA CU ROLUL ACESTORA IN MECIURI, CARE AU ARBITRAT IN MECIURILE IN CARE ECHIPA RESPECTIVA A OBTINUT O VICTORIE.
+-- TRATATI SI CAZUL IN CARE NU EXISTA ECHIPA DATA SI CAZUL IN CARE NU EXISTA ARBITRII CARE SA RESPECTE CRITERIUL DE MAI SUS.
+
+CREATE OR REPLACE PROCEDURE AfiseazaInformatiiEchipa (p_team_id IN ECHIPA.EchipaID%TYPE) IS
+    v_nume_echipa ECHIPA.NumeEchipa%TYPE;
+
+    TYPE ArbitruListType IS TABLE OF ARBITRU.Nume%TYPE INDEX BY PLS_INTEGER;
+    v_arbitru_list ArbitruListType;
+
+    CURSOR player_cursor IS (
+        SELECT J.Nume, J.Prenume, J.Nationalitate, J.Pozitie
+        FROM JUCATOR J
+        JOIN ECHIPA E ON J.EchipaID = E.EchipaID
+        WHERE E.EchipaID = p_team_id
+    );
+
+    TYPE PlayerInfo IS TABLE OF player_cursor%ROWTYPE;
+    v_players PlayerInfo;
+
+    CURSOR sponsor_cursor IS (
+        SELECT S.NumeSponsor, S.Tara
+        FROM SPONSOR S
+        JOIN SPONSORECHIPA SE ON S.SponsorID = SE.SponsorID
+        JOIN ECHIPA E ON SE.EchipaID = E.EchipaID
+        WHERE E.EchipaID = p_team_id
+    );
+
+    TYPE SponsorInfo IS VARRAY(10) OF sponsor_cursor%ROWTYPE;
+    v_sponsors SponsorInfo;
+    
+    niciun_arbitru EXCEPTION;
+BEGIN
+    SELECT NumeEchipa INTO v_nume_echipa FROM ECHIPA WHERE EchipaID = p_team_id;
+
+    FOR rec IN (SELECT DISTINCT A.Nume, A.Prenume, AM.RolArbitru
+                FROM ARBITRU A
+                JOIN ARBITRUMECI AM ON A.ArbitruID = AM.ArbitruID
+                JOIN MECI M ON AM.MeciID = M.MeciID
+                JOIN ECHIPAMECI EM ON M.MeciID = EM.MeciID
+                WHERE ((EM.EchipaID_1 = p_team_id AND M.ScorEchipa1 > M.ScorEchipa2) OR
+                       (EM.EchipaID_2 = p_team_id AND M.ScorEchipa1 < M.ScorEchipa2))
+               )
+    LOOP
+        v_arbitru_list(v_arbitru_list.COUNT + 1) := rec.Prenume || ' ' || rec.Nume || ' ---rol--- ' || rec.RolArbitru;
+    END LOOP;
+
+    IF v_arbitru_list.COUNT > 0 THEN
+        FOR i IN 1..v_arbitru_list.COUNT
+        LOOP
+            DBMS_OUTPUT.PUT_LINE('Nume Arbitru: ' || v_arbitru_list(i));
+        END LOOP;
+    ELSE 
+        RAISE niciun_arbitru;
+    END IF;
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    OPEN player_cursor;
+    FETCH player_cursor BULK COLLECT INTO v_players;
+    CLOSE player_cursor;
+
+    FOR i IN 1..v_players.COUNT LOOP
+        DBMS_OUTPUT.PUT_LINE('Jucator: ' || v_players(i).Prenume || ' ' || v_players(i).Nume || ', Nationalitate: ' || v_players(i).Nationalitate || ', Pozitie: ' || v_players(i).Pozitie);
+    END LOOP;
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    OPEN sponsor_cursor;
+    FETCH sponsor_cursor BULK COLLECT INTO v_sponsors;
+    CLOSE sponsor_cursor;
+
+    DBMS_OUTPUT.PUT_LINE('Sponsorii echipei ' || v_nume_echipa || ':');
+    FOR i IN 1..v_sponsors.COUNT LOOP
+        DBMS_OUTPUT.PUT_LINE('Sponsor: ' || v_sponsors(i).NumeSponsor || ', Tara: ' || v_sponsors(i).Tara);
+    END LOOP;
+EXCEPTION
+    WHEN niciun_arbitru THEN
+        DBMS_OUTPUT.PUT_LINE('Nu exista arbitri!');
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nu exista aceasta echipa!');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Eroare neasteptata!');
+END AfiseazaInformatiiEchipa;
+/
+
+BEGIN
+--    -- Functioneaza 
+--    AfiseazaInformatiiEchipa(1);
+--    
+--    DBMS_OUTPUT.NEW_LINE();
+    
+    -- Nu exista echipa cu id-ul -1
+    AfiseazaInformatiiEchipa(-1);
+    
+    DBMS_OUTPUT.NEW_LINE();
+    
+    -- Nu exista arbitrii care sa respecte criteriul
+    AfiseazaInformatiiEchipa(2);
+END;
+/
+
+
+
+-- 7
+-- PENTRU UN ID AL UNUI MECI, AFISATI ECHIPELE, ANTRENORII SI JUCATORII DE LA ACESTE ECHIPE.
+-- LUATI IN CONSIDERARE SI CAZUL IN CARE NU EXISTA INFORMATII PENTRU UN MECI ID ANUME.
+
+CREATE OR REPLACE PROCEDURE EchipeAntrenorJucatori(p_MeciID IN MECI.MeciID%TYPE) IS
+    v_EchipaID_1 ECHIPA.EchipaID%TYPE;
+    v_EchipaID_2 ECHIPA.EchipaID%TYPE;
+
+    CURSOR MeciInfoCursor IS
+        SELECT EME.EchipaID_1, EME.EchipaID_2
+        FROM ECHIPAMECI EME
+        WHERE EME.MeciID = p_MeciID;
+
+    CURSOR EchipaInfoCursor (p_EchipaID INT) IS
+        SELECT E.NumeEchipa, A.Nume AS Antrenor
+        FROM ECHIPA E
+        LEFT JOIN ANTRENOR A ON E.EchipaID = A.EchipaID
+        WHERE E.EchipaID = p_EchipaID;
+        
+    FUNCTION EchipaInfo(p_EchipaID IN ECHIPA.EchipaID%TYPE) RETURN VARCHAR2 IS
+        rezultat VARCHAR2(500);
+    BEGIN
+        FOR Element_echipa IN EchipaInfoCursor(p_EchipaID) LOOP
+            EXIT WHEN EchipaInfoCursor%NOTFOUND;
+    
+            rezultat := 'Echipa: ' || Element_echipa.NumeEchipa || CHR(10);
+            rezultat := rezultat || 'Antrenor: ' || Element_echipa.Antrenor || CHR(10);
+            rezultat := rezultat || 'Lista de jucatori:' || CHR(10);
+    
+            FOR Player IN (
+                SELECT J.Prenume || ' ' || J.Nume AS NumeJucator
+                FROM JUCATOR J
+                WHERE J.EchipaID = p_EchipaID
+            ) LOOP
+                rezultat := rezultat || '  - ' || Player.NumeJucator || CHR(10);
+            END LOOP;
+        END LOOP;
+    
+        RETURN rezultat;
+    END EchipaInfo;
+
+BEGIN
+    OPEN MeciInfoCursor;
+
+    FETCH MeciInfoCursor INTO v_EchipaID_1, v_EchipaID_2;
+    IF MeciInfoCursor%NOTFOUND THEN
+        RAISE NO_DATA_FOUND;
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('In meciul ' || p_MeciID || ': ');
+    DBMS_OUTPUT.PUT_LINE(EchipaInfo(v_EchipaID_1));
+    DBMS_OUTPUT.PUT_LINE(EchipaInfo(v_EchipaID_2));
+
+    CLOSE MeciInfoCursor;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nu exista informatii pentru MeciID-ul specificat!');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Eroare la accesarea datelor pentru MeciID-ul specificat!');
+END EchipeAntrenorJucatori;
+/
+
+BEGIN
+    -- Functioneaza
+    EchipeAntrenorJucatori(1);
+END;
+/
+
+BEGIN    
+    -- NO_DATA_FOUND tratat
+    EchipeAntrenorJucatori(-1);
+END;
+/
+
+
+
+-- 8
+-- SA SE AFISEZE JUCATORII CU INALTIMEA SI GREUTATEA MAI MARE SAU EGALA CU INALTIMEA 
+-- SI GREUTATEA DATE CA PARAMETRII AL CAROR ANTRENOR ARE MAI MULT DE 50 DE ANI
+
+CREATE OR REPLACE FUNCTION InformatiiJucator(p_Inaltime IN INT, p_Greutate IN NUMBER) RETURN VARCHAR2 IS
+    v_Rezultat VARCHAR2(500);
+    inaltime_invalida EXCEPTION;
+    greutate_invalida EXCEPTION;
+BEGIN
+    IF p_Inaltime < 150 OR p_Inaltime > 210 THEN
+        RAISE inaltime_invalida;
+    ELSIF p_Greutate < 50 OR p_Greutate > 150 THEN
+        RAISE greutate_invalida;
+    END IF;
+
+    FOR jucator IN (SELECT J.Prenume || ' ' || J.Nume AS InfoJucator
+                    FROM JUCATOR J
+                    JOIN ECHIPA E ON J.EchipaID = E.EchipaID
+                    JOIN ANTRENOR A ON E.EchipaID = A.EchipaID 
+                    WHERE J.Inaltime >= p_Inaltime AND J.Greutate >= p_Greutate 
+                          AND TRUNC(MONTHS_BETWEEN(SYSDATE, A.DataNasterii) / 12) > 50)
+    LOOP
+        v_Rezultat := v_Rezultat || CHR(10) || jucator.InfoJucator;
+    END LOOP;
+
+    RETURN v_Rezultat;
+EXCEPTION
+    WHEN inaltime_invalida THEN
+        RETURN 'Inaltime invalida!';
+    WHEN greutate_invalida THEN
+        RETURN 'Greutate invalida!';
+END InformatiiJucator;
+/ 
+
+BEGIN
+    -- Functionare normala
+    DBMS_OUTPUT.PUT_LINE(InformatiiJucator(150, 85));
+    DBMS_OUTPUT.NEW_LINE;
+    
+    -- Inaltime invalida
+    DBMS_OUTPUT.PUT_LINE(InformatiiJucator(-20, 55));
+    DBMS_OUTPUT.NEW_LINE;
+    
+    -- Greutate invalida
+    DBMS_OUTPUT.PUT_LINE(InformatiiJucator(150, 230));
+END;
+/
+
+
+
+-- 9
+-- AFISATI ARBITRUL CU UN ANUMIT ROL CARE A ARBITRAT INTR-UN MECI/IN MECIURI JUCATE PE UN ANUMIT STADION
+
+CREATE OR REPLACE PROCEDURE ArbitriStadion(p_NumeStadion IN VARCHAR2, p_RolArbitru IN VARCHAR2) AS
+    p_Arbitru VARCHAR2(200);
+BEGIN
+    SELECT DISTINCT A.Prenume || ' ' || A.Nume || ' a fost ' || AM.RolArbitru AS RezumatRol
+    INTO p_Arbitru
+    FROM ARBITRU A
+    JOIN ARBITRUMECI AM ON A.ArbitruID = AM.ArbitruID
+    JOIN MECI M ON AM.MeciID = M.MeciID
+    JOIN ECHIPAMECI EM ON M.MeciID = EM.MeciID
+    JOIN ECHIPA E ON EM.EchipaID_1 = E.EchipaID
+    WHERE E.EchipaID = EM.EchipaID_1 AND E.NumeStadion = p_NumeStadion AND AM.RolArbitru = p_RolArbitru;
+    
+    DBMS_OUTPUT.PUT_LINE(p_Arbitru || ' in meciul/meciurile disputat(e) pe ' || p_NumeStadion);
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Nu s-au gasit date pentru stadionul/rolul specificat!');
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('Exista mai mult de un arbitru!');
+END ArbitriStadion;
+/
+
+BEGIN
+    -- Functionare normala - doar Sophie Dupont a fost arbitru video la meciul de pe Camp Nou.
+    ArbitriStadion('Camp Nou', 'Arbitru VAR');
+    
+    DBMS_OUTPUT.NEW_LINE();
+    
+    -- Functionare normala - desi Sophie Dupont a fost arbitru central in ambele meciuri disputate pe Old Trafford, ea este singura cu acest rol din acele meciuri.
+    ArbitriStadion('Old Trafford', 'Arbitru Central');
+    
+    DBMS_OUTPUT.NEW_LINE();
+    
+    -- Nu exista stadionul Gogosi deci va intra pe NO_DATA_FOUND.
+    ArbitriStadion('Gogosi', 'Arbitru Asistent');
+    
+    DBMS_OUTPUT.NEW_LINE();
+    
+    -- Exista mai multe meciuri pe Old Trafford, iar rolul de Arbitru Aditional a fost atribuit diferitor arbitri in acele meciuri, deci va intra pe TOO_MANY_ROWS.
+    ArbitriStadion('Old Trafford', 'Arbitru Aditional');
+        
+    DBMS_OUTPUT.NEW_LINE();
+    
+    -- Nu exista rolul Abobonanaguagua deci va intra pe NO_DATA_FOUND.
+    ArbitriStadion('Camp Nou', 'Abobonanaguagua');
+END;
+/
+
+
+
+-- 10
+-- Trigger LMD(limbaj de manipulare a datelor) la nivel de comanda care nu permite inserarea/stergerea/editarea datelor din JUCATOR in intervalul orar 17:00 - 9:00
+-- NOTA: 9-17 a devenit 11-18, deoarece ora SYSDATE e cu 2 ore inaintea orei noastre, iar corect ar fi sa nu putem modifica
+-- date la ora 17:xy, dar la ora 16:xy ar fi corect, deci am fost nevoit sa exclud ultima ora pentru corectitudinea logica
+
+-- DROP TRIGGER fara_alterari_in_intervalul_orar_17_9;
+CREATE OR REPLACE TRIGGER fara_alterari_in_intervalul_orar_17_9
+    BEFORE INSERT OR UPDATE OR DELETE ON JUCATOR
+BEGIN
+    IF (TO_CHAR(SYSDATE,'HH24') NOT BETWEEN 7 AND 14) THEN           
+        IF INSERTING THEN
+            RAISE_APPLICATION_ERROR(-20011, CHR(10) || 'Nu puteti insera date in tabelul JUCATOR in intervalul orar 9:00 - 17:00.' 
+                                            || CHR(10) || 'Data si ora curenta: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+        ELSIF UPDATING THEN
+            RAISE_APPLICATION_ERROR(-20012, CHR(10) || 'Nu puteti actualiza date din tabelul JUCATOR in intervalul orar 9:00 - 17:00.' 
+                                            || CHR(10) || 'Data si ora curenta: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+        ELSIF DELETING THEN
+            RAISE_APPLICATION_ERROR(-20013, CHR(10) || 'Nu puteti sterge date din tabelul JUCATOR in intervalul orar 9:00 - 17:00.' 
+                                            || CHR(10) || 'Data si ora curenta: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI:SS'));
+        END IF;
+    END IF;
+END;
+/
+
+SELECT TO_CHAR(SYSDATE,'HH24:MI:SS') FROM DUAL;
+
+INSERT INTO JUCATOR (JucatorID, Nume, Prenume, DataNasterii, SalariuAnual, Nationalitate, Pozitie, Inaltime, Greutate, EchipaID)
+VALUES (31, 'Alves', 'Daniel', TO_DATE('1983-05-06', 'YYYY-MM-DD'), 8000000, 'Brazilian', 'Fundas', '172', '70', 1);
+
+DELETE FROM JUCATOR WHERE JucatorID = 31;
+
+
+
+-- 11
+-- Trigger LMD(limbaj de manipulare a datelor) la nivel de linie care nu permite inserarea unui antrenor la o anumita echipa in cazul in care aceasta echipa are deja antrenor
+
+CREATE OR REPLACE PACKAGE pachet_antrenor IS
+    TYPE tip_record_antrenor IS RECORD (
+        id_echipa ANTRENOR.EchipaID%TYPE,
+        nr NUMBER(1)
+    );
+    TYPE tip_indexat IS TABLE OF tip_record_antrenor INDEX BY PLS_INTEGER;
+    tabel_indexat_antrenor tip_indexat;
+END pachet_antrenor;
+/
+
+-- DROP TRIGGER trigger_evita_inserare_antrenor_comanda;
+CREATE OR REPLACE TRIGGER trigger_evita_inserare_antrenor_comanda
+    BEFORE INSERT OR UPDATE OF EchipaID
+    ON ANTRENOR
+DECLARE
+BEGIN
+    SELECT EchipaID, COUNT(*)
+    BULK COLLECT INTO pachet_antrenor.tabel_indexat_antrenor
+    FROM ANTRENOR
+    WHERE EchipaID IS NOT NULL
+    GROUP BY EchipaID;
+END trig_evita_inserare_antrenor_comanda;
+/
+
+-- DROP TRIGGER trigger_evita_inserare_antrenor_linie;
+CREATE OR REPLACE TRIGGER trigger_evita_inserare_antrenor_linie
+    BEFORE INSERT OR UPDATE OF EchipaID
+    ON ANTRENOR
+FOR EACH ROW
+BEGIN
+    FOR i IN 1..pachet_antrenor.tabel_indexat_antrenor.COUNT LOOP
+        IF pachet_antrenor.tabel_indexat_antrenor(i).id_echipa = :NEW.EchipaID 
+        AND pachet_antrenor.tabel_indexat_antrenor(i).nr = 1 THEN
+            RAISE_APPLICATION_ERROR(-20002, 'Echipa ' || :NEW.EchipaID || ' are deja un antrenor. Nu poti adauga alt antrenor.');
+        END IF;
+    END LOOP;
+END trigger_evita_inserare_antrenor_linie;
+/
+
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (6, 'Popescu', 'Ion', 'Romana', TO_DATE('21-12-1973', 'DD-MM-YYYY'), 1);
+
+INSERT INTO ANTRENOR (AntrenorID, Nume, Prenume, Nationalitate, DataNasterii, EchipaID)
+VALUES (6, 'Ionescu', 'Paul', 'Romana', TO_DATE('08-04-1980', 'DD-MM-YYYY'), 6);
+
+UPDATE ANTRENOR
+SET DATANASTERII = TO_DATE('26-01-1963', 'DD-MM-YYYY')
+WHERE ANTRENORID = 1;
+
+
+
+-- 12
+-- Trigger LDD(limbaj de definire a datelor) care salveaza fiecare actiune de CREATE/DROP/ALTER ale userilor in cadrul Bazei de Date.
+
+CREATE TABLE UTILIZATOR_DE_AUDIT(
+    denumirea_bazei_de_date VARCHAR2(55),
+    utilizator_conectat VARCHAR2(55),
+    actiune_eveniment VARCHAR2(55),
+    tip_obiect_referit VARCHAR2(55),
+    nume_obiect_referit VARCHAR2(55),
+    data_calendaristica TIMESTAMP(5)
+);
+
+-- DROP TRIGGER trigger_pentru_audit;   
+CREATE OR REPLACE TRIGGER trigger_pentru_audit
+    AFTER CREATE OR DROP OR ALTER ON SCHEMA
+BEGIN
+    INSERT INTO UTILIZATOR_DE_AUDIT
+    VALUES (SYS.DATABASE_NAME, SYS.LOGIN_USER, SYS.SYSEVENT, SYS.DICTIONARY_OBJ_TYPE, SYS.DICTIONARY_OBJ_NAME, SYSTIMESTAMP(5));
+END;
+/
+
+-- DROP TABLE tabel_de_test;
+CREATE TABLE tabel_de_test (prima_coloana_de_test NUMBER(10));
+ALTER TABLE tabel_de_test ADD (a_doua_coloana_de_test NUMBER(10));
+INSERT INTO tabel_de_test VALUES (1,2);
+CREATE INDEX ind_tabel_de_test ON tabel_de_test(prima_coloana_de_test);
+
+SELECT * FROM UTILIZATOR_DE_AUDIT;
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+---- ACEASTA ESTE PARTEA >= 6
+
+-- 13
+-- INCLUDETI INTR-UN PACHET TOATE OBIECTELE DEFINITE IN CADRUL PROIECTULUI
+
+CREATE OR REPLACE PACKAGE pachet_toate_obiectele_ex_13 
+IS
+    PROCEDURE AfiseazaInformatiiEchipa (p_team_id IN ECHIPA.EchipaID%TYPE);
+    PROCEDURE EchipeAntrenorJucatori(p_MeciID IN MECI.MeciID%TYPE);
+    FUNCTION InformatiiJucator(p_Inaltime IN INT, p_Greutate IN NUMBER) RETURN VARCHAR2;
+    PROCEDURE ArbitriStadion(p_NumeStadion IN VARCHAR2, p_RolArbitru IN VARCHAR2);
+END;
+/
+
+CREATE OR REPLACE PACKAGE BODY pachet_toate_obiectele_ex_13 
+IS
+    PROCEDURE AfiseazaInformatiiEchipa (p_team_id IN ECHIPA.EchipaID%TYPE) IS
+        v_nume_echipa ECHIPA.NumeEchipa%TYPE;
+    
+        TYPE ArbitruListType IS TABLE OF ARBITRU.Nume%TYPE INDEX BY PLS_INTEGER;
+        v_arbitru_list ArbitruListType;
+    
+        CURSOR player_cursor IS (
+            SELECT J.Nume, J.Prenume, J.Nationalitate, J.Pozitie
+            FROM JUCATOR J
+            JOIN ECHIPA E ON J.EchipaID = E.EchipaID
+            WHERE E.EchipaID = p_team_id
+        );
+    
+        TYPE PlayerInfo IS TABLE OF player_cursor%ROWTYPE;
+        v_players PlayerInfo;
+    
+        CURSOR sponsor_cursor IS (
+            SELECT S.NumeSponsor, S.Tara
+            FROM SPONSOR S
+            JOIN SPONSORECHIPA SE ON S.SponsorID = SE.SponsorID
+            JOIN ECHIPA E ON SE.EchipaID = E.EchipaID
+            WHERE E.EchipaID = p_team_id
+        );
+    
+        TYPE SponsorInfo IS VARRAY(10) OF sponsor_cursor%ROWTYPE;
+        v_sponsors SponsorInfo;
+        
+        niciun_arbitru EXCEPTION;
+    BEGIN
+        SELECT NumeEchipa INTO v_nume_echipa FROM ECHIPA WHERE EchipaID = p_team_id;
+    
+        FOR rec IN (SELECT DISTINCT A.Nume, A.Prenume, AM.RolArbitru
+                    FROM ARBITRU A
+                    JOIN ARBITRUMECI AM ON A.ArbitruID = AM.ArbitruID
+                    JOIN MECI M ON AM.MeciID = M.MeciID
+                    JOIN ECHIPAMECI EM ON M.MeciID = EM.MeciID
+                    WHERE ((EM.EchipaID_1 = p_team_id AND M.ScorEchipa1 > M.ScorEchipa2) OR
+                           (EM.EchipaID_2 = p_team_id AND M.ScorEchipa1 < M.ScorEchipa2))
+                   )
+        LOOP
+            v_arbitru_list(v_arbitru_list.COUNT + 1) := rec.Prenume || ' ' || rec.Nume || ' ---rol--- ' || rec.RolArbitru;
+        END LOOP;
+    
+        IF v_arbitru_list.COUNT > 0 THEN
+            FOR i IN 1..v_arbitru_list.COUNT
+            LOOP
+                DBMS_OUTPUT.PUT_LINE('Nume Arbitru: ' || v_arbitru_list(i));
+            END LOOP;
+        ELSE 
+            RAISE niciun_arbitru;
+        END IF;
+    
+        --------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+        OPEN player_cursor;
+        FETCH player_cursor BULK COLLECT INTO v_players;
+        CLOSE player_cursor;
+    
+        FOR i IN 1..v_players.COUNT LOOP
+            DBMS_OUTPUT.PUT_LINE('Jucator: ' || v_players(i).Prenume || ' ' || v_players(i).Nume || ', Nationalitate: ' || v_players(i).Nationalitate || ', Pozitie: ' || v_players(i).Pozitie);
+        END LOOP;
+    
+        --------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+        OPEN sponsor_cursor;
+        FETCH sponsor_cursor BULK COLLECT INTO v_sponsors;
+        CLOSE sponsor_cursor;
+    
+        DBMS_OUTPUT.PUT_LINE('Sponsorii echipei ' || v_nume_echipa || ':');
+        FOR i IN 1..v_sponsors.COUNT LOOP
+            DBMS_OUTPUT.PUT_LINE('Sponsor: ' || v_sponsors(i).NumeSponsor || ', Tara: ' || v_sponsors(i).Tara);
+        END LOOP;
+    EXCEPTION
+        WHEN niciun_arbitru THEN
+            DBMS_OUTPUT.PUT_LINE('Nu exista arbitri!');
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Nu exista aceasta echipa!');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Eroare neasteptata!');
+    END AfiseazaInformatiiEchipa;
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    PROCEDURE EchipeAntrenorJucatori(p_MeciID IN MECI.MeciID%TYPE) IS
+        v_EchipaID_1 ECHIPA.EchipaID%TYPE;
+        v_EchipaID_2 ECHIPA.EchipaID%TYPE;
+    
+        CURSOR MeciInfoCursor IS
+            SELECT EME.EchipaID_1, EME.EchipaID_2
+            FROM ECHIPAMECI EME
+            WHERE EME.MeciID = p_MeciID;
+    
+        CURSOR EchipaInfoCursor (p_EchipaID INT) IS
+            SELECT E.NumeEchipa, A.Nume AS Antrenor
+            FROM ECHIPA E
+            LEFT JOIN ANTRENOR A ON E.EchipaID = A.EchipaID
+            WHERE E.EchipaID = p_EchipaID;
+            
+        FUNCTION EchipaInfo(p_EchipaID IN ECHIPA.EchipaID%TYPE) RETURN VARCHAR2 IS
+            rezultat VARCHAR2(500);
+        BEGIN
+            FOR Element_echipa IN EchipaInfoCursor(p_EchipaID) LOOP
+                EXIT WHEN EchipaInfoCursor%NOTFOUND;
+        
+                rezultat := 'Echipa: ' || Element_echipa.NumeEchipa || CHR(10);
+                rezultat := rezultat || 'Antrenor: ' || Element_echipa.Antrenor || CHR(10);
+                rezultat := rezultat || 'Lista de jucatori:' || CHR(10);
+        
+                FOR Player IN (
+                    SELECT J.Prenume || ' ' || J.Nume AS NumeJucator
+                    FROM JUCATOR J
+                    WHERE J.EchipaID = p_EchipaID
+                ) LOOP
+                    rezultat := rezultat || '  - ' || Player.NumeJucator || CHR(10);
+                END LOOP;
+            END LOOP;
+        
+            RETURN rezultat;
+        END EchipaInfo;
+    
+    BEGIN
+        OPEN MeciInfoCursor;
+    
+        FETCH MeciInfoCursor INTO v_EchipaID_1, v_EchipaID_2;
+        IF MeciInfoCursor%NOTFOUND THEN
+            RAISE NO_DATA_FOUND;
+        END IF;
+    
+        DBMS_OUTPUT.PUT_LINE('In meciul ' || p_MeciID || ': ');
+        DBMS_OUTPUT.PUT_LINE(EchipaInfo(v_EchipaID_1));
+        DBMS_OUTPUT.PUT_LINE(EchipaInfo(v_EchipaID_2));
+    
+        CLOSE MeciInfoCursor;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Nu exista informatii pentru MeciID-ul specificat!');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Eroare la accesarea datelor pentru MeciID-ul specificat!');
+    END EchipeAntrenorJucatori;
+    
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    FUNCTION InformatiiJucator(p_Inaltime IN INT, p_Greutate IN NUMBER) RETURN VARCHAR2 IS
+        v_Rezultat VARCHAR2(500);
+        inaltime_invalida EXCEPTION;
+        greutate_invalida EXCEPTION;
+    BEGIN
+        IF p_Inaltime < 150 OR p_Inaltime > 210 THEN
+            RAISE inaltime_invalida;
+        ELSIF p_Greutate < 50 OR p_Greutate > 150 THEN
+            RAISE greutate_invalida;
+        END IF;
+    
+        FOR jucator IN (SELECT J.Prenume || ' ' || J.Nume AS InfoJucator
+                        FROM JUCATOR J
+                        JOIN ECHIPA E ON J.EchipaID = E.EchipaID
+                        JOIN ANTRENOR A ON E.EchipaID = A.EchipaID 
+                        WHERE J.Inaltime >= p_Inaltime AND J.Greutate >= p_Greutate 
+                              AND TRUNC(MONTHS_BETWEEN(SYSDATE, A.DataNasterii) / 12) > 50)
+        LOOP
+            v_Rezultat := v_Rezultat || CHR(10) || jucator.InfoJucator;
+        END LOOP;
+    
+        RETURN v_Rezultat;
+    EXCEPTION
+        WHEN inaltime_invalida THEN
+            RETURN 'Inaltime invalida!';
+        WHEN greutate_invalida THEN
+            RETURN 'Greutate invalida!';
+    END InformatiiJucator;    
+    
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    PROCEDURE ArbitriStadion(p_NumeStadion IN VARCHAR2, p_RolArbitru IN VARCHAR2) AS
+        p_Arbitru VARCHAR2(200);
+    BEGIN
+        SELECT DISTINCT A.Prenume || ' ' || A.Nume || ' a fost ' || AM.RolArbitru AS RezumatRol
+        INTO p_Arbitru
+        FROM ARBITRU A
+        JOIN ARBITRUMECI AM ON A.ArbitruID = AM.ArbitruID
+        JOIN MECI M ON AM.MeciID = M.MeciID
+        JOIN ECHIPAMECI EM ON M.MeciID = EM.MeciID
+        JOIN ECHIPA E ON EM.EchipaID_1 = E.EchipaID
+        WHERE E.EchipaID = EM.EchipaID_1 AND E.NumeStadion = p_NumeStadion AND AM.RolArbitru = p_RolArbitru;
+        
+        DBMS_OUTPUT.PUT_LINE(p_Arbitru || ' in meciul/meciurile disputat(e) pe ' || p_NumeStadion);
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Nu s-au gasit date pentru stadionul/rolul specificat!');
+        WHEN TOO_MANY_ROWS THEN
+            DBMS_OUTPUT.PUT_LINE('Exista mai mult de un arbitru!');
+    END ArbitriStadion;    
+END pachet_toate_obiectele_ex_13;
+/
+
+-- TESTARE / EXECUTIE
+
+-- Functioneaza 
+EXECUTE pachet_toate_obiectele_ex_13.AfiseazaInformatiiEchipa(1);
+    
+DBMS_OUTPUT.NEW_LINE();
+
+-- Nu exista echipa cu id-ul -1
+EXECUTE pachet_toate_obiectele_ex_13.AfiseazaInformatiiEchipa(-1);
+
+DBMS_OUTPUT.NEW_LINE();
+
+-- Nu exista arbitrii care sa respecte criteriul
+EXECUTE pachet_toate_obiectele_ex_13.AfiseazaInformatiiEchipa(2);
+--##############################################################################
+-- Functioneaza
+EXECUTE pachet_toate_obiectele_ex_13.EchipeAntrenorJucatori(1);
+
+DBMS_OUTPUT.NEW_LINE();
+
+-- NO_DATA_FOUND tratat
+EXECUTE pachet_toate_obiectele_ex_13.EchipeAntrenorJucatori(-1);
+--##############################################################################
+DECLARE
+    string_rezultat_din_functie VARCHAR2(500);
+BEGIN
+    -- Functionare normala
+    string_rezultat_din_functie := pachet_toate_obiectele_ex_13.InformatiiJucator(150, 85);
+    DBMS_OUTPUT.PUT_LINE(string_rezultat_din_functie);
+    DBMS_OUTPUT.NEW_LINE;
+    
+    -- Inaltime invalida
+    string_rezultat_din_functie := pachet_toate_obiectele_ex_13.InformatiiJucator(-20, 55);
+    DBMS_OUTPUT.PUT_LINE(string_rezultat_din_functie);
+    DBMS_OUTPUT.NEW_LINE;
+    
+    -- Greutate invalida
+    string_rezultat_din_functie := pachet_toate_obiectele_ex_13.InformatiiJucator(150, 230);
+    DBMS_OUTPUT.PUT_LINE(string_rezultat_din_functie);
+END;
+/
+--##############################################################################
+-- Functionare normala - doar Sophie Dupont a fost arbitru video la meciul de pe Camp Nou.
+EXECUTE pachet_toate_obiectele_ex_13.ArbitriStadion('Camp Nou', 'Arbitru VAR');
+
+DBMS_OUTPUT.NEW_LINE();
+
+-- Functionare normala - desi Sophie Dupont a fost arbitru central in ambele meciuri disputate pe Old Trafford, ea este singura cu acest rol din acele meciuri.
+EXECUTE pachet_toate_obiectele_ex_13.ArbitriStadion('Old Trafford', 'Arbitru Central');
+
+DBMS_OUTPUT.NEW_LINE();
+
+-- Nu exista stadionul Gogosi deci va intra pe NO_DATA_FOUND.
+EXECUTE pachet_toate_obiectele_ex_13.ArbitriStadion('Gogosi', 'Arbitru Asistent');
+
+DBMS_OUTPUT.NEW_LINE();
+
+-- Exista mai multe meciuri pe Old Trafford, iar rolul de Arbitru Aditional a fost atribuit diferitor arbitri in acele meciuri, deci va intra pe TOO_MANY_ROWS.
+EXECUTE pachet_toate_obiectele_ex_13.ArbitriStadion('Old Trafford', 'Arbitru Aditional');
+    
+DBMS_OUTPUT.NEW_LINE();
+
+-- Nu exista rolul Abobonanaguagua deci va intra pe NO_DATA_FOUND.
+EXECUTE pachet_toate_obiectele_ex_13.ArbitriStadion('Camp Nou', 'Abobonanaguagua');
+
+
+
+--------------------------------------------------------------------------------
+-- 14
+CREATE OR REPLACE PACKAGE Pachet_Jucatori AS
+    TYPE tip_jucator IS RECORD (
+        nume JUCATOR.Nume%TYPE,
+        prenume JUCATOR.Prenume%Type,
+        salariu JUCATOR.SalariuAnual%Type,
+        pozitie JUCATOR.Pozitie%Type,
+        id_echipa JUCATOR.EchipaId%Type
+    );
+
+    TYPE tip_tabel_jucatori IS TABLE OF tip_jucator;
+    tabel_imbricat_de_jucatori tip_tabel_jucatori := tip_tabel_jucatori();
+
+    FUNCTION punctaj_maxim RETURN NUMBER;
+
+    FUNCTION calculeaza_salariu_mediu_lunar_jucatori_ai_unei_echipe(id_echipa IN ECHIPA.EchipaID%TYPE) RETURN NUMBER;
+    
+    PROCEDURE mareste_salariu_jucatori_din_echipele_cu_punctaj_maxim(procentaj_marire_salariu IN NUMBER);
+
+    PROCEDURE echipe_cu_jucatori_al_caror_salariu_a_fost_crescut;
+END;
+/
+
+CREATE OR REPLACE PACKAGE BODY Pachet_Jucatori AS
+    FUNCTION punctaj_maxim RETURN NUMBER IS
+        punctaj_maxim_valoare NUMBER(10);
+    BEGIN
+        SELECT MAX(3*Castigate + 1*Egaluri)
+        INTO punctaj_maxim_valoare
+        FROM ECHIPA;
+
+        RETURN punctaj_maxim_valoare;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          RETURN 0;
+    END punctaj_maxim;
+
+    FUNCTION calculeaza_salariu_mediu_lunar_jucatori_ai_unei_echipe(id_echipa IN ECHIPA.EchipaID%TYPE) RETURN NUMBER IS
+        salariu_mediu NUMBER := 0;
+        nr_jucatori NUMBER := 0;
+    BEGIN
+        SELECT SUM(SalariuAnual), COUNT(*)
+        INTO salariu_mediu, nr_jucatori
+        FROM JUCATOR
+        WHERE EchipaID = id_echipa;
+
+        IF salariu_mediu > 0 THEN
+            salariu_mediu := salariu_mediu / nr_jucatori / 12;
+        ELSE
+            RAISE NO_DATA_FOUND;
+        END IF;
+
+        RETURN salariu_mediu;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+          RETURN 0;
+    END calculeaza_salariu_mediu_lunar_jucatori_ai_unei_echipe;
+
+    PROCEDURE mareste_salariu_jucatori_din_echipele_cu_punctaj_maxim(procentaj_marire_salariu IN NUMBER) IS
+        v_punctaj_maxim NUMBER := punctaj_maxim();
+    BEGIN
+        FOR Echipa_cursor IN (
+            SELECT EchipaId
+            FROM ECHIPA
+            WHERE (3*Castigate + 1*Egaluri) = v_punctaj_maxim
+        ) LOOP
+            FOR Jucator_cursor IN (
+                SELECT JucatorId, Nume, Prenume, SalariuAnual, Pozitie, EchipaId
+                FROM JUCATOR
+                WHERE EchipaId = Echipa_cursor.EchipaId
+            ) LOOP
+                UPDATE JUCATOR
+                SET SalariuAnual = SalariuAnual + ((procentaj_marire_salariu * SalariuAnual) / 100)
+                WHERE JucatorId = Jucator_cursor.JucatorId;
+
+                SELECT Nume, Prenume, SalariuAnual, Pozitie, EchipaId
+                BULK COLLECT INTO tabel_imbricat_de_jucatori
+                FROM JUCATOR
+                WHERE EchipaId = Echipa_cursor.EchipaId;
+            END LOOP;
+        END LOOP;
+    END mareste_salariu_jucatori_din_echipele_cu_punctaj_maxim;
+
+    PROCEDURE echipe_cu_jucatori_al_caror_salariu_a_fost_crescut IS
+        echipe VARCHAR2(500);
+        nume_echipa VARCHAR2(50);
+    BEGIN
+        FOR i IN 1..tabel_imbricat_de_jucatori.COUNT LOOP
+            SELECT NumeEchipa
+            INTO nume_echipa
+            FROM ECHIPA
+            WHERE EchipaId = tabel_imbricat_de_jucatori(i).id_echipa;
+            echipe := echipe || ' ' || nume_echipa;
+        END LOOP;
+        
+        DBMS_OUTPUT.PUT_LINE(nume_echipa);
+        DBMS_OUTPUT.NEW_LINE();
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Nu avem nicio echipa!');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Eroare neasteptata!');
+    END echipe_cu_jucatori_al_caror_salariu_a_fost_crescut;
+END Pachet_Jucatori;
+/
+
+
+DECLARE
+    echipa_id NUMBER := 1;
+BEGIN
+    -- Testam functionalitatea functiei calculeaza_salariu_mediu_lunar_jucatori_ai_unei_echipe
+    DECLARE
+        salariu_mediu_lunar NUMBER;
+    BEGIN
+        salariu_mediu_lunar := Pachet_Jucatori.calculeaza_salariu_mediu_lunar_jucatori_ai_unei_echipe(echipa_id);
+        DBMS_OUTPUT.PUT_LINE('Salariu Mediu Lunar al FC Barcelona: ' || salariu_mediu_lunar);
+    END;
+    
+    -- Testam functionalitatea functiei care calculeaza punctajul maxim al unei echipe
+    DBMS_OUTPUT.NEW_LINE();
+    DBMS_OUTPUT.PUT_LINE('Echipa cea mai buna are ' || Pachet_Jucatori.punctaj_maxim() || ' puncte');
+    
+    -- Testam functionalitatea procedurilor in care se mareste salariul jucatorilor din cea mai buna echipa 
+    Pachet_Jucatori.mareste_salariu_jucatori_din_echipele_cu_punctaj_maxim(15);
+    
+    -- Testam afisarea tuturor echipelor ale caror jucatori au primit marire de salariu
+    DBMS_OUTPUT.NEW_LINE();
+    Pachet_Jucatori.echipe_cu_jucatori_al_caror_salariu_a_fost_crescut();
+END;
+/
